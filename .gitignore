@@ -1,3 +1,4 @@
 public/
 .shake/
 log/
+.DS_Store

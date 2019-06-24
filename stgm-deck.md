@@ -7,7 +7,15 @@ author: Armin Bernstetter
 date: today
 ---
 
-# Haskell
+# Haskell {layout="columns"}
+
+## {.left}
+
+![](img/haskell.png)
+
+## {.right}
+
+asdf
 
 # GHC
 
@@ -29,6 +37,13 @@ Tagless
 
 # 
 
+
+# The STG Language
+
+# Push/Enter vs Eval/Apply
+
+# 
+
 # Ministg
 
 # Program
@@ -40,6 +55,10 @@ apply = FUN(f x -> f x);
 
 twentytwo = CON(I 22);
 main = THUNK(apply const twentytwo true)
+```
+## Ausgabe
+```haskell
+(I 22)
 ```
 
 #
