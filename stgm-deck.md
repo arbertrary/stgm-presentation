@@ -7,19 +7,27 @@ author: Armin Bernstetter
 date: today
 ---
 
-# Haskell {layout="columns"}
+# Haskell 
 
-## {.left}
+## {.column width="30%"}
 
 ![](img/haskell.png)
 
-## {.right}
+## {.column width="50%"}
 
-asdf
+- 1989
+- Komitee
+- bla
+
 
 # GHC
 
+- De facto default compiler
+- Konkurrenten: Hugs, ...
+
 # The GHC Compilation Flow
+
+insert flow from gitlab page 
 
 # Abstract Machines?
 

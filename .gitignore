@@ -2,3 +2,4 @@ public/
 .shake/
 log/
 .DS_Store
+index.md.generated
