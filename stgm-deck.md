@@ -22,7 +22,7 @@ csl: chicago-author-date.csl
 - 1989 start of development, 1990 Haskell version 1.0
 - Named after mathematician Haskell Curry
 
-[@hudak2007history]
+*A history of Haskell: being lazy with class* [@hudak2007history]
 
 # GHC
 
@@ -52,7 +52,9 @@ csl: chicago-author-date.csl
 
 ```
 
-# TODO: Make this speakernotes
+[https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/generated-code](https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/generated-code){.small}
+
+# {.notes}
 
 1. Type Checking, parse tree
 2. intermediate Core language
@@ -71,8 +73,10 @@ Compiled graph reduction machine for a lazy functional language
 @marlow2004making:
 : *Making a fast curry: push/enter vs. eval/apply for higher-order languages*
 
+@marlow2007faster:
+: *Faster Laziness Using Dynamic Pointer Tagging*
  
-# Other examples
+# Other examples/Predecessors
 
 - G-machine [@johnsson1984efficient]
 - TIM: Three Instruction Machine [@fairbairn1987tim]
@@ -91,19 +95,40 @@ Compiled graph reduction machine for a lazy functional language
 
 #
 
+## Tagless
+
+![](img/wellyes.jpg){width=75%}
+
+
+
+#
+
 Tagless
-: Other implementations examine tag fields on heap objects to decide how to treat them.
-: STGM makes a jump to the code pointed to by the object; Objects in the heap have uniform representation with a code pointer in their first field
-: All heap values are represented alike on the heap (in the form of closures). 
+: Refers to how a heap closure is evaluated
+: `f x y = case x of (a,b) -> a+y`
+: Before taking x apart: STGM pushes code to stack and jumps to entry code for x
 
 TagFUL
-: Closures would have to be annotated with type information or whether they were previously evaluated already
+: Closure to evaluate is only entered if its tag says it is unevaluated
+
+# Update 2007
+
+*Faster Laziness Using Dynamic Pointer Tagging* [@marlow2007faster]
+
+- Tagless scheme more expensive (additional indirect jumps)
+- *Dynamic pointer tagging*:  using spare low bits of a pointer to encode information about pointed-to closure
+
+# Heap object structure
+
+![](img/table.png)
+
+Here: every heap object has associated entry code. Therefore term "closure" is used for any heap object
 
 # 
 
 Closure
 : Block of static code together with values of its free variables. Physical representation of such a closure is a pointer to a contiguous block of
-heap-allocated storage, consisting of a code pointer which points to the static code, followed by the values of the free variables
+heap-allocated storage
 
 Thunk
 : Suspended computation. In a non-strict language, values are passed in unevaluated form, and only evaluated when their value is actually required. These unevaluated forms capture a suspended computation and can be represented by a closure in the same way as a function value. When a thunk is forced for the first time, it is physically updated with its value
@@ -138,11 +163,11 @@ zipWith k (x:xs) (y:ys) = k x y : zipWith k xs ys
 # Push/Enter vs Eval/Apply
 
 
-## {.fragment}
+## 
 Push/Enter
 : The function which statically knows its own arity examines the stack to figure out how many arguments it has been passed and where they are.
 
-## {.fragment}
+## 
 Eval/Apply
 : The caller which statically knows what the arguments are examines the function closure, extracts its arity and makes an exact call to the function.
 
@@ -171,7 +196,7 @@ obj ::= FUN(x1 ... xn -> e)   (Function: arity = n >=1
       | BLACKHOLE             (only during evaluation)
 ```
 
-# Heap objects explained (MAKE THIS SPEAKERNOTES)
+# {.notes}
 
 - let expression allocates object in the heap
 - $FUN(x_1 ... x_n -> e)$
@@ -213,14 +238,14 @@ map = FUN (f xs ->
 # Ministg
 
 - [https://github.com/bjpop/ministg](https://github.com/bjpop/ministg)
-- STG interpreter written in haskell
+- STG interpreter written in Haskell
 - Provides insight in STG language evaluation
 - Optional tracing of program execution
 
 ## "Alternative" to ministg
 - stgi
 - [https://github.com/quchen/stgi](https://github.com/quchen/stgi)
-- Also STG interpreter but based on [@jones1992implementing]: **Implementing lazy functional languages on stock hardware: the Spineless Tagless G-machine**
+- Also STG interpreter but based on [@jones1992implementing]
 
 # Example 
 
@@ -297,6 +322,7 @@ Heap
 # Conclusion
 
 - It is impossible to a rational conclusion about performance based on just the differences between the models
+- Push/Enter seems to be natural fit with currying
 - Eval/Apply seems to have decisive advantages in terms of complexity
 - Easier to map code to portable assembly language with E/A
 - Bottom Line: If Eval/Apply is no more expensive than push/enter it is definitely to be preferred

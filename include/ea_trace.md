@@ -52,7 +52,7 @@
 |` twentytwo     `                    | `CON(I 22) `                    |
 +-----------------------------------+-----------------------------------+
 
-# TODO make notes
+# {.notes}
 
 - upd* main: update thunk main with value; update continuation
 - thunk main gets replaced with a blackhole during evaluation
@@ -87,7 +87,7 @@
 | `twentytwo    `                   | ` CON(I 22) `                    |
 +-----------------------------------+-----------------------------------+
 
-# TODO: make speakernotes
+# {.notes}
 
 - CALLK: call continuation pushed on stack, captures the excess arguments (twentytwo)
 - const true are the arguments given to apply
@@ -121,7 +121,7 @@
 | ` twentytwo   `                   |  `CON(I 22)  `                   |
 +-----------------------------------+-----------------------------------+
 
-# TODO: Make this speakernotes
+# {.notes}
 
 - PAP2: create new Partial application for const
 
@@ -151,7 +151,7 @@
 |  ` twentytwo    `                 | `CON(I 22)    `                 |
 +-----------------------------------+-----------------------------------+
 
-# TODO: make this speakernotes
+# {.notes}
 
 - RETFUN: returns a function value (here: $0 PAP) to a call continuation
 - Call continuation is (* twentytwo) here
@@ -181,7 +181,7 @@
 |  `twentytwo  `                    | `CON(I 22)`                     |
 +-----------------------------------+-----------------------------------+
 
-# TODO: Make this speakernotes
+# {.notes}
 
 - PCALL: Unpack the PAP and apply `const true` to its new argument twentytwo
 - const is a FUN now
@@ -205,7 +205,7 @@
 | `true   `                         | `CON(True)    `                   |
 +-----------------------------------+-----------------------------------+
 
-# TODO: Make speakernotes
+# {.notes}
 
 - EXACT: const now has exactly the number of arguments it needs
 - returns true
