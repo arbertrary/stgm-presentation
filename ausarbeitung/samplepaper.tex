@@ -38,7 +38,7 @@
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-The spineless tagless G-machine (STGM) is an abstract machine that is located at the core of the Glasgow Haskell Compiler GHC. Since its creation at the start of Haskell development in early 1990s it has undergone several significant changes. This work aims at showing the evolution of the STGM and overall at providing insight in the workings of the most used Haskell compiler GHC.
+The spineless tagless G-machine (STGM) is an abstract machine that is located at the core of the Glasgow Haskell Compiler GHC. Since its creation at the start of Haskell development in early 1990s it has undergone several significant changes. This work aims at showing the evolution of the STGM and overall at providing insight in the workings of the most widely-used Haskell compiler GHC.
 
 %\keywords{First keyword  \and Second keyword \and Another keyword.}
 \end{abstract}
@@ -50,7 +50,7 @@ The spineless tagless G-machine (STGM) is an abstract machine that is located at
 
 This work provides an insight in the compilation process of the lazy, pure functional programming language Haskell. For this we take a look inside the Glasgow Haskell Compiler, today the most used compiler for Haskell [citation needed]. Located at its core is the \textit{Spineless Tagless G-Machine}, an abstract machine used as a bridge between high level code and machine code.
 
-Described in detail in the 1992 paper \textit{Implementing Lazy functional languages on stock hardware: the Spineless Tagless G-machine} \cite{jones1992implementing}, the STGM has undergone several significant changes since then. Two papers highlighting these changes are \cite{marlow2004making} and \cite{marlow2007faster}. The former introducing the switch from the \textit{push/enter} evaluation method to the \textit{eval/apply} (see section BLA), the latter introducing dynamic pointer tagging which revokes the \enquote{tagless} part in the name of the STGM.
+Described in detail in the 1992 paper \textit{Implementing Lazy functional languages on stock hardware: the Spineless Tagless G-machine} \cite{jones1992implementing}, the STGM has undergone several significant changes since then. Two papers highlighting these changes are \textit{Making a Fast Curry: Push/Enter vs.Eval/Apply for Higher-order Languages}\cite{marlow2004making} and \textit{Faster Laziness Using Dynamic Pointer Tagging}\cite{marlow2007faster}. The former introducing the switch from the \textit{push/enter} evaluation method to the \textit{eval/apply} (see section BLA), the latter introducing dynamic pointer tagging which revokes the \enquote{tagless} part in the name of the STGM.
 
 
 
@@ -84,6 +84,7 @@ The STG language is a pure functional programming language on its own. Reduced t
 
 syntax details?
 
+heap object layouts?
 
 
 \subsection{$C--$}
@@ -115,10 +116,14 @@ Spineless refers to the way the code is represented on the machine.
 STG programs are not represented as a tree but as a graph. Therefore, in memory a STG program is not a contiguous block of memory but smaller parts of the graph that reference each other.
 
 \subsubsection{Tagless}
-The term tagless refers to
+The term tagless refers to the way the STG-machine evaluates a heap closure. 
 
 
-\subsection{Evaluation}
+[EVERYTHING FROM THE INTRODUCTION OF THE POINTER TAGGING PAPER]
+
+
+\subsection{Evaluation/function calls}
+Function calls in a lazy functional languages with currying and partial application require special mechanisms in compilers.
 \enquote{Currying} is one of the core principles of lazy functional languages 
 
 [INSERT DETAILS ABOUT CURRYING]
@@ -132,10 +137,11 @@ HOW TO INCLUDE THE EVALUATION TRACE?
 \subsubsection{Eval/Apply}
 
 \subsection{Dynamic Pointer Tagging}
-\cite{marlow2007faster}
+In 2007, Marlow et al.\cite{marlow2007faster} found, that Haskell programs compiled by GHC show mispredicted branches on modern processors. This led to a re-examination of the \enquote{tagless} aspect of the GHC. The result were significant performance improvements.
 
 
 \section{Conclusion}
+
 
 
 \section{First Section}
