@@ -6,6 +6,7 @@
 %
 \usepackage{graphicx}
 \usepackage{csquotes}
+\usepackage{hyperref}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
 %
@@ -52,31 +53,57 @@ This work provides an insight in the compilation process of the lazy, pure funct
 
 Described in detail in the 1992 paper \textit{Implementing Lazy functional languages on stock hardware: the Spineless Tagless G-machine} \cite{jones1992implementing}, the STGM has undergone several significant changes since then. Two papers highlighting these changes are \textit{Making a Fast Curry: Push/Enter vs.Eval/Apply for Higher-order Languages}\cite{marlow2004making} and \textit{Faster Laziness Using Dynamic Pointer Tagging}\cite{marlow2007faster}. The former introducing the switch from the \textit{push/enter} evaluation method to the \textit{eval/apply} (see section BLA), the latter introducing dynamic pointer tagging which revokes the \enquote{tagless} part in the name of the STGM.
 
+Section \ref{sec:basics} provides basic information about Haskell and compilers in general.
+
+Section \ref{sec:ghc} describes GHC, the \textit{Glasgow Haskell Compiler} which is the most widely-used Haskell compiler. This section introduces the building blocks that GHC consists of.
+
+Section \ref{sec:stgm} takes a more in-depth look into the \textit{Spineless Tagless G-Machine}, an abstract machine that stands between Haskell code and assembly code in GHC's compilation process.
+
+Section \ref{sec:conclusion} concludes with a retrospective overview of STGM and its changes throughout the last 30 years.
+
 
 
 \section{Basics}
+\label{sec:basics}
 
-This section introduces some basics about compilers, Haskell and functional programming in general.
+This section introduces basics about compilers, Haskell and functional programming in general.
 
 \subsection{Haskell}
-
-What is Haskell, where did it start what does it do?
-\cite{hudak2007history}
-Haskell is a pure functional programming language that emerged in the late 1980s and early 1990s. It was created with the goal of finding a common functional language to improve interactivity and exchange between programmers and researchers since, at the time, many lesser known functional programming languages existed. A committee consisting of (Hudak, SPJ, Wadler etc) was created and met several times until in 1991 the Haskell 1.0 Report was published CITE THE HASKELL 1.0 REPORT
+Haskell is a pure functional programming language that emerged during the late 1980s and early 1990s. It was created with the goal of finding a common functional language to improve interactivity and exchange between programmers and researchers since, at the time, many lesser known functional programming languages existed. A committee consisting of Paul Hudak, John Hughes, Simon Peyton Jones, Philip Wadler and others was created and met several times until in 1990 the Haskell 1.0 Report was published \cite{hudak2007history}.
 
 \subsection{Compilers}
-How do compilers work in general
+A compiler is a software system consisting of several phases, that translates programs from a higher-level language to machine code. \cite{muchnick1997advanced}
 
+In general, these phases are \textit{lexical analysis}, \textit{syntactic analysis or parsing}, \textit{semantic checking} and \textit{code generation}. \cite{muchnick1997advanced}
+
+\paragraph{Lexical Analysis} analyzes the character string and produces errors in case any part of the program string is not parseable into legal tokens. Legal in this case refers to tokens that are members of the vocabulary of the respective programming language.
+
+\paragraph{Syntactic Analysis or Parsing} parses the program into an intermediate representation. An example would be a parse tree accompanied by a symbol table containing information on identifiers used in the program and their attributes. This phase may also produce error messages if syntax errors are detected.
+
+\paragraph{Semantic Checking} examines the program for static-semantic validity. This phase takes as input the intermediate representation and determines whether the program satisfies the requirements for the static-semantic properties of the source language.
+
+\paragraph{Code Generation} finally transforms the intermediate representation into machine code which can then be executed. 
+
+
+These phases are often complemented by additional steps in many compilers, the Glasgow Haskell Compiler being one of those (see Section \ref{sec:ghc}).
 
 \subsection{Abstract machines}
 What is an Abstract machine?
+\cite{diehl2000abstract}
 
 \section{GHC}
-The Glasgow Haskell Compiler, named after the city where it was initially developed
+\label{sec:ghc}
+
+\href{https://downloads.haskell.org/~ghc/7.8.1/docs/html/users_guide/an-external-representation-for-the-ghc-core-language-for-ghc-6.10.html}{link ghc 7.8.1}
+
+\href{https://downloads.haskell.org/ghc/8.6.5/docs/html/users_guide}{link ghc 8.6.5}
+
+The Glasgow Haskell Compiler, named after the city where its development was initialized, is the most widely-used Haskell compiler \cite{marlow2007faster}.
+
 
 
 \subsection{Core Language}
-The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases.
+The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases. It consists of GHC's central data types and is a small, explicitly-typed variant of System F \cite{girard1986system} which is called System FC \cite{sulzmann2007system}.
 
 
 \subsection{The STGM Language}
@@ -104,11 +131,13 @@ The C backend uses GCC but is deprecated
 The Native Code Generator is the default way used in GHC.
 
 \subsubsection{LLVM}
-LLVM is a modern portable compiler toolchain that was developed as an alternative to the classic GCC toolchain.
+LLVM is a modern portable compiler toolchain that was developed as an alternative to the classic GCC toolchain. \cite{lattner2004llvm}
 
 Using LLVM in GHC results in similar compilation performance as the NCG but can lead to faster performing executables.
 
 \section{STGM in depth}
+\cite{jones1992implementing}
+\label{sec:stgm}
 
 \subsubsection{Spineless}
 Spineless refers to the way the code is represented on the machine.
@@ -141,7 +170,7 @@ In 2007, Marlow et al.\cite{marlow2007faster} found, that Haskell programs compi
 
 
 \section{Conclusion}
-
+\label{sec:conclusion}
 
 
 \section{First Section}
