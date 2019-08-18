@@ -53,7 +53,8 @@ The spineless tagless G-machine (STGM) is an abstract machine that is located at
 
 This work provides an insight in the compilation process of the lazy, purely functional programming language Haskell. For this we take a look inside the Glasgow Haskell Compiler, today the most used compiler for Haskell [citation needed]. Located at its core is the \textit{Spineless Tagless G-Machine}, an abstract machine used as a bridge between high level code and machine code.
 
-Described in detail in the 1992 paper \textit{Implementing Lazy functional languages on stock hardware: the Spineless Tagless G-machine} \cite{jones1992implementing}, the STGM has undergone several significant changes since then. Two papers highlighting these changes are \textit{Making a Fast Curry: Push/Enter vs.Eval/Apply for Higher-order Languages}\cite{marlow2004making} and \textit{Faster Laziness Using Dynamic Pointer Tagging}\cite{marlow2007faster}. The former introducing the switch from the \textit{push/enter} evaluation method to the \textit{eval/apply} (see section BLA), the latter introducing dynamic pointer tagging which revokes the \enquote{tagless} part in the name of the STGM.
+Described in detail in the 1992 paper \textit{Implementing Lazy functional languages on stock hardware: the Spineless Tagless G-machine} \cite{jones1992implementing}, the STGM has undergone several significant changes since then. Two papers highlighting these changes are \textit{Making a Fast Curry: Push/Enter vs.
+Eval/Apply for Higher-order Languages}\cite{marlow2004making} and \textit{Faster Laziness Using Dynamic Pointer Tagging}\cite{marlow2007faster}. The former introducing the switch from the \textit{push/enter} evaluation method to the \textit{eval/apply} (see section BLA), the latter introducing dynamic pointer tagging which revokes the \enquote{tagless} part in the name of the STGM.
 
 Section \ref{sec:basics} provides basic information about Haskell and compilers in general.
 
@@ -79,10 +80,11 @@ A compiler is a software system consisting of several phases, that translates pr
 In general, these phases are \textit{lexical analysis}, \textit{syntactic analysis or parsing}, \textit{semantic checking} and \textit{code generation}. \cite{muchnick1997advanced}
 
 \begin{figure}
-\label{fig:compiler}
+
 \centering
 \includegraphics[width=10cm]{compiler.png}
 \caption{General illustration of the phases of a compiler taken from Muchnik \cite{muchnick1997advanced}.}
+\label{fig:compiler}
 \end{figure}
 
 \paragraph{Lexical Analysis} analyzes the character string and produces errors in case any part of the program string is not parseable into legal tokens. Legal in this case refers to tokens that are members of the vocabulary of the respective programming language.
@@ -114,22 +116,23 @@ Examples for such abstract machines or related concepts are the Java Virtual Mac
 
 The Glasgow Haskell Compiler, named after the city where its development began, is the most widely-used Haskell compiler \cite{marlow2007faster}. It is the de facto default compiler for Haskell and is shipped with the \textit{Haskell Platform} downloadable at \url{https://www.haskell.org/}.
 
-Figure \ref{fig:ghc} illustrates the different phases program code is passed through during compilation. In contrast to the general compiler structure shown in figure \ref{fig:compiler}, GHC has several additional intermediate steps.
+Figure \ref{fig:ghc} illustrates the different phases program code is passed through during compilation. In contrast to the general compiler structure shown in figure \ref{fig:compiler}, GHC has several additional intermediate steps. The Haskell source code is initially parsed and translated to a reduced \textit{Core} language which is then again translated to the \textit{STG representation}. A code generator (the \textit{STGM}) generates \texttt{C--} code followed by three possible paths for finally generating machine code.
 
 \begin{figure}
-\label{fig:ghc}
+
 \centering
 \includegraphics[width=12cm]{ghcflow.pdf}
-\caption{GHC's compilation phases. Graphic based on a depiction from the official GHC gitlab repository \protect\footnotemark}
+\caption{GHC's compilation phases. Own graphic based on a depiction from the official GHC gitlab repository \protect\footnotemark}
+\label{fig:ghc}
 \end{figure}
 \footnotetext{\url{https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/generated-code}}
 
 \subsection{Core Language}
-The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases. It consists of Haskell's central data types and is a small, explicitly-typed variant of the typed lambda calculus System F \cite{girard1986system} which is called System FC \cite{sulzmann2007system}.
-
+The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases. It consists of Haskell's central data types and is a small, explicitly-typed variant of the typed lambda calculus System F \cite{girard1986system} which is called System FC \cite{sulzmann2007system}. Type checking is performed here, overloading is resolved and pattern-matching is translated into \texttt{case} expressions where each one performs only a single level of matching \cite{jones1992implementing}.
 
 \subsection{The STGM Language}
-The STG language is a purely functional programming language on its own that is used as an intermedi 
+The core language is then translated to the \textit{STG Language}.
+This language is a purely functional programming language on its own that is used as an intermediate representation.
 
 syntax details?
 
@@ -138,9 +141,13 @@ heap object layouts?
 
 Move to "in depth" section?
 
-\subsection{$C--$}
-\cite{jones1999c}
-$C - - $ is a programming language developed by Simon Peyton-Jones as a portable backend-language for compilers. Its name references C and C++. Where C++ can be seen as an extension of the C language, C-- is to be thought of as a reduction to a smaller core language. C-- in general is made for being generated by compilers and not for being written by programmers.
+\subsection{\texttt{C--}}
+
+A code generator (the STG machine) translates the STG language into \texttt{C--}.
+
+\texttt{C--} is a programming language developed by Simon Peyton-Jones as a portable backend-language for compilers. Where C++ can be seen as an extension of the C language, \texttt{C--} is to be thought of as a reduction to a smaller core language. \texttt{C--} in general is made for being generated by compilers and not for being written by programmers. \cite{jones1999c}
+
+paragraph
 
 
 
@@ -165,11 +172,15 @@ Using LLVM in GHC results in similar compilation performance as the NCG but can 
 \section{STGM in depth}
 \label{sec:stgm}
 
-Vielleicht zuerst einfach nur den Status von 1992 zeigen und dann die Änderungen? (Push/enter -> eval/apply und tagless -> dynamic pointer tagging)
+The Spineless Tagless G-Machine is an abstract machine for non-strict functional languages.
+It was developed by Simon Peyton Jones as an alternative or successor to other such abstract machines like the \textit{Three Instruction Machine (TIM)} by Fairbairn and Wray \cite{fairbairn1987tim} and the \textit{G-Machine} by Johnsson \cite{johnsson1984efficient}.
+
+Vielleicht zuerst einfach nur den Status von 1992 zeigen und dann die Änderungen? (Push/enter $->$ eval/apply und tagless $->$ dynamic pointer tagging)
 -> Sehr gute Idee!
 
 \cite{jones1992implementing}
 
+\subsubsection{Graph reducing}
 
 \subsubsection{Spineless}
 Spineless refers to the way the code is represented on the machine.
@@ -177,7 +188,10 @@ Spineless refers to the way the code is represented on the machine.
 STG programs are not represented as a tree but as a graph. Therefore, in memory a STG program is not a contiguous block of memory but smaller parts of the graph that reference each other.
 
 \subsubsection{Tagless}
+
 \textbf{SPJONES 1993 Seite 12}
+
+\textbf{SPJONES 1993 Seite 5}
 The term tagless refers to the way the STG-machine evaluates a heap closure. 
 
 
@@ -200,9 +214,11 @@ HOW TO INCLUDE THE EVALUATION TRACE?
 \subsubsection{Push/Enter}
 
 
+\subsection{Changes}
+
 \subsubsection{Eval/Apply}
 
-\subsection{Dynamic Pointer Tagging}
+\subsubsection{Dynamic Pointer Tagging}
 In 2007, Marlow et al.\cite{marlow2007faster} found that Haskell programs compiled by GHC show mispredicted branches on modern processors. This led to a re-examination of the \enquote{tagless} aspect of the STGM. The result were significant performance improvements.
 
 
