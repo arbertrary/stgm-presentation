@@ -7,7 +7,9 @@
 \usepackage{graphicx}
 \usepackage{csquotes}
 \usepackage{hyperref}
-\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage{float}
+
 
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -75,9 +77,9 @@ This section introduces basics about compilers, Haskell and functional programmi
 Haskell is a purely functional programming language that emerged during the late 1980s and early 1990s. It was created with the goal of finding a common functional language to improve interactivity and exchange between programmers and researchers since, at the time, many lesser known functional programming languages existed. A committee consisting of Paul Hudak, John Hughes, Simon Peyton Jones, Philip Wadler and others was created and met several times until in 1990 the Haskell 1.0 Report was published \cite{hudak2007history}.
 
 \subsection{Compilers}
-A compiler is a software system consisting of several phases, that translates programs from a higher-level language to machine code. \cite{muchnick1997advanced}
+A compiler is a software system consisting of several phases, that translates programs from a higher-level language to machine code \cite{muchnick1997advanced}.
 
-In general, these phases are \textit{lexical analysis}, \textit{syntactic analysis or parsing}, \textit{semantic checking} and \textit{code generation}. \cite{muchnick1997advanced}
+In general, these phases are \textit{lexical analysis}, \textit{syntactic analysis or parsing}, \textit{semantic checking} and \textit{code generation} \cite{muchnick1997advanced}. Figure \ref{fig:compiler} shows an illustration of these phases and their transitions.
 
 \begin{figure}
 
@@ -109,14 +111,11 @@ Examples for such abstract machines or related concepts are the Java Virtual Mac
 
 \section{GHC}
 \label{sec:ghc}
-
-\href{https://downloads.haskell.org/~ghc/7.8.1/docs/html/users_guide/an-external-representation-for-the-ghc-core-language-for-ghc-6.10.html}{link ghc 7.8.1}
-
-\href{https://downloads.haskell.org/ghc/8.6.5/docs/html/users_guide}{link ghc 8.6.5}
-
 The Glasgow Haskell Compiler, named after the city where its development began, is the most widely-used Haskell compiler \cite{marlow2007faster}. It is the de facto default compiler for Haskell and is shipped with the \textit{Haskell Platform} downloadable at \url{https://www.haskell.org/}.
 
-Figure \ref{fig:ghc} illustrates the different phases program code is passed through during compilation. In contrast to the general compiler structure shown in figure \ref{fig:compiler}, GHC has several additional intermediate steps. The Haskell source code is initially parsed and translated to a reduced \textit{Core} language which is then again translated to the \textit{STG representation}. A code generator (the \textit{STGM}) generates \texttt{C--} code followed by three possible paths for finally generating machine code.
+Figure \ref{fig:ghc} illustrates the different phases program code is passed through during compilation. In contrast to the general compiler structure shown in figure \ref{fig:compiler}, GHC has several additional intermediate steps. 
+
+The Haskell source code is initially parsed and translated to a reduced \textit{Core} language which is then again translated to the \textit{STG representation}. A code generator (the \textit{STGM}) generates \texttt{C--} code followed by three possible paths for finally generating machine code.
 
 \begin{figure}
 
@@ -131,13 +130,40 @@ Figure \ref{fig:ghc} illustrates the different phases program code is passed thr
 The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases. It consists of Haskell's central data types and is a small, explicitly-typed variant of the typed lambda calculus System F \cite{girard1986system} which is called System FC \cite{sulzmann2007system}. Type checking is performed here, overloading is resolved and pattern-matching is translated into \texttt{case} expressions where each one performs only a single level of matching \cite{jones1992implementing}.
 
 \subsection{The STGM Language}
-The core language is then translated to the \textit{STG Language}.
+The core language is then translated to the \textit{STG language}.
 This language is a purely functional programming language on its own that is used as an intermediate representation.
 
+Each of the constructs in the language corresponds to an operation that is executed.
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{|l|l|}
+	\hline 
+	Construct & Operational reading  \\ 
+	\hline 
+	Function application	& Tail call  \\  
+	Let expression	& Heap allocation  \\ 
+	Case expression	& Evaluation  \\ 
+	Constructor application	& Return to continuation  \\ 
+	\hline 
+\end{tabular} 
+\caption{Table taken from Jones 1993 \cite{jones1992implementing}}
+\end{table}
+
+Some of its characteristics defined by Peyton Jones \cite{jones1992implementing} are:
+
+\paragraph{All function and constructor arguments are simple variables or constants}
+\begin{itemize}
+	\item All function and constructor arguments are simple variables or constants
+	\item All constructors and built-in operations are saturated
+	\item Pattern matching is performed only by \texttt{case} expressions
+\end{itemize}
+
+[SPJONES 1992 p. 19]
+
+
 syntax details?
-
-heap object layouts?
-
 
 Move to "in depth" section?
 
@@ -156,19 +182,22 @@ paragraph
 
 
 \subsection{Backends}
-GHC supports the generation of assembly machine code via several backends.
-
-
-\subsubsection{C Backend}
-The C backend uses the \textit{GNU Compiler Collection} GCC but is deprecated
+GHC supports the generation of assembly machine code via multiple backends. In addition to a native code generator it offers a compilation route via LLVM and a route via C that has, however, been deprecated.
 
 \subsubsection{Native Code Generator}
-The Native Code Generator is the default way used in GHC.
+The Native Code Generator is the default backend used in GHC and compiles \texttt{C--} directly to assembly code. The NCG is the fastest backend and produces well performing code. \cite{GHCmanual}
 
 \subsubsection{LLVM}
-LLVM is a modern portable compiler framework that was developed as an alternative to the classic GCC toolchain. Its acronym stands for \textit{Low Level Virtual Machine} \cite{lattner2004llvm}
+LLVM is a modern portable compiler framework that was developed as an alternative to the classic GCC toolchain. Its acronym stands for \textit{Low Level Virtual Machine} \cite{lattner2004llvm}.
 
-Using LLVM in GHC results in similar compilation performance as the NCG but can lead to faster performing executables.
+Using LLVM in GHC results in similar compilation performance as the NCG but can lead to faster performing executables for some cases. In these cases - like numeric, array heavy code - the penalty is a significant increase in compilation times, though. To use GHC with the LLVM backend, LLVM has to be installed on the respective system.\cite{GHCmanual}
+
+\subsubsection{C Backend}
+The C backend uses the \textit{GNU Compiler Collection} GCC but has bee deprecated since around GHC version 7.0 (2011) \cite{GHCmanual}.
+
+
+
+
 
 \section{STGM in depth}
 \label{sec:stgm}
@@ -205,9 +234,11 @@ All heap objects have a uniform representation with a code pointer in their firs
 
 This concept is explained in an example by Marlow et al. \cite{marlow2007faster}. Take for example the expression
 
-\begin{verbatim}
-f x y = case x of (a,b) -> a + y
-\end{verbatim}
+\begin{center}
+	\begin{BVerbatim}
+	f x y = case x of (a,b) -> a + y
+	\end{BVerbatim}
+\end{center}
 
 The compiler of a lazy language has to ensure that \texttt{x} is evaluated before taking it apart into patterns. It pushes a continuation for the computation \texttt{a+y} onto the stack and jumps to the \textit{entry code} for \texttt{x}. This jump to the entry code is called \textit{entering} the closure. If the closure is unevaluated, the entry code will evaluate it and return its value to the continuation, otherwise it will return immediately.
 A tag-ful approach would only enter the closure if it is not yet evaluated. This would be checked by performing an extra test on the tag i.e. the type of the closure. The benefit of a tagless approach is that any closure can be evaluated simply by entering it which is a simple and uniform process. \cite{marlow2007faster}
