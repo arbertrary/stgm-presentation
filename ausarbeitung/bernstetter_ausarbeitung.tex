@@ -9,6 +9,7 @@
 \usepackage{hyperref}
 \usepackage{fancyvrb}
 \usepackage{float}
+\usepackage{minted}
 
 
 % Used for displaying a sample figure. If possible, figure files should
@@ -71,17 +72,17 @@ Section \ref{sec:conclusion} concludes with a retrospective overview of STGM and
 \section{Basics}
 \label{sec:basics}
 
-This section introduces basics about compilers, Haskell and functional programming in general.
+This section introduces some basics about
 
 \subsection{Haskell}
-Haskell is a purely functional programming language that emerged during the late 1980s and early 1990s. It was created with the goal of finding a common functional language to improve interactivity and exchange between programmers and researchers since, at the time, many lesser known functional programming languages existed. A committee consisting of Paul Hudak, John Hughes, Simon Peyton Jones, Philip Wadler and others was created and met several times until in 1990 the Haskell 1.0 Report was published \cite{hudak2007history}.
+Haskell is a purely functional programming language that emerged during the late 1980s and early 1990s. It was created with the goal of finding a common functional language to improve interactivity and exchange between programmers and researchers since, at the time, many lesser known functional programming languages existed. A committee consisting of Paul Hudak, John Hughes, Simon Peyton Jones, Philip Wadler and others was created and met several times until in 1990 the Haskell 1.0 Report was published \cite{hudak2007history}. One of the foundations Haskell is based on is the principle of lazy evaluation. Lazy (or non-strict, or call-by-need) evaluation causes compiler development for lazy langauges to differ significantly from strict languages such as C.
 
 \subsection{Compilers}
 A compiler is a software system consisting of several phases, that translates programs from a higher-level language to machine code \cite{muchnick1997advanced}.
 
 In general, these phases are \textit{lexical analysis}, \textit{syntactic analysis or parsing}, \textit{semantic checking} and \textit{code generation} \cite{muchnick1997advanced}. Figure \ref{fig:compiler} shows an illustration of these phases and their transitions.
 
-\begin{figure}
+\begin{figure}[H]
 
 \centering
 \includegraphics[width=10cm]{compiler.png}
@@ -101,17 +102,17 @@ In general, these phases are \textit{lexical analysis}, \textit{syntactic analys
 These phases are often complemented by additional steps in many compilers, the Glasgow Haskell Compiler being one of those (see Section \ref{sec:ghc}).
 
 \subsection{Abstract Machines}
-This section describes the concept of abstract machines. They bridge the gap between high level source code and machine code by providing an intermediate language stage for compilation. Abstract machines are located in the space between the two extremes of being a small intermediate language and being a model for a real machine that is yet to be built \cite{diehl2000abstract}.
+Abstract machines bridge the gap between high level source code and machine code by providing an intermediate language stage for compilation. They are located in the conceptual space between the two extremes of being a small intermediate language and being a model for a real machine that is yet to be built \cite{diehl2000abstract}.
 
 Abstract machines execute programs step-by-step in a loop. This execution loop iterates over a sequence of instructions often using a stack and register with the program counter as a special register pointing at the next instruction. \cite{diehl2000abstract}
 
-Abstract machines introduce an additional layer of abstraction to the implementation of compilers for programming languages.
+These machines introduce an additional layer of abstraction to the implementation of compilers for programming languages.
 
 Examples for such abstract machines or related concepts are the Java Virtual Machine and the Spineless Tagless G-Machine which is the focus of this work.
 
 \section{GHC}
 \label{sec:ghc}
-The Glasgow Haskell Compiler, named after the city where its development began, is the most widely-used Haskell compiler \cite{marlow2007faster}. It is the de facto default compiler for Haskell and is shipped with the \textit{Haskell Platform} downloadable at \url{https://www.haskell.org/}.
+The Glasgow Haskell Compiler, named after the city where its development began in 1989, is the most widely-used Haskell compiler \cite{marlow2007faster}. It is the de facto default compiler for Haskell and is shipped with the \textit{Haskell Platform} downloadable at \url{https://www.haskell.org/}.
 
 Figure \ref{fig:ghc} illustrates the different phases program code is passed through during compilation. In contrast to the general compiler structure shown in figure \ref{fig:compiler}, GHC has several additional intermediate steps. 
 
@@ -121,7 +122,7 @@ The Haskell source code is initially parsed and translated to a reduced \textit{
 
 \centering
 \includegraphics[width=12cm]{ghcflow.pdf}
-\caption{GHC's compilation phases. Own graphic based on a depiction from the official GHC gitlab repository \protect\footnotemark}
+\caption{GHC's compilation phases. Own graphic based on a depiction from the official GHC repository \protect\footnotemark}
 \label{fig:ghc}
 \end{figure}
 \footnotetext{\url{https://gitlab.haskell.org/ghc/ghc/wikis/commentary/compiler/generated-code}}
@@ -129,43 +130,39 @@ The Haskell source code is initially parsed and translated to a reduced \textit{
 \subsection{Core Language}
 The core language is a variant of Haskell in where all syntactic sugar is removed and resolved e.g. the do-notation or type aliases. It consists of Haskell's central data types and is a small, explicitly-typed variant of the typed lambda calculus System F \cite{girard1986system} which is called System FC \cite{sulzmann2007system}. Type checking is performed here, overloading is resolved and pattern-matching is translated into \texttt{case} expressions where each one performs only a single level of matching \cite{jones1992implementing}.
 
-\subsection{The STGM Language}
+\subsection{The STG Language}
 The core language is then translated to the \textit{STG language}.
 This language is a purely functional programming language on its own that is used as an intermediate representation.
 
-Each of the constructs in the language corresponds to an operation that is executed.
-
-\begin{table}[H]
-\centering
-
-\begin{tabular}{|l|l|}
-	\hline 
-	Construct & Operational reading  \\ 
-	\hline 
-	Function application	& Tail call  \\  
-	Let expression	& Heap allocation  \\ 
-	Case expression	& Evaluation  \\ 
-	Constructor application	& Return to continuation  \\ 
-	\hline 
-\end{tabular} 
-\caption{Table taken from Jones 1993 \cite{jones1992implementing}}
-\end{table}
-
 Some of its characteristics defined by Peyton Jones \cite{jones1992implementing} are:
 
-\paragraph{All function and constructor arguments are simple variables or constants}
 \begin{itemize}
-	\item All function and constructor arguments are simple variables or constants
-	\item All constructors and built-in operations are saturated
-	\item Pattern matching is performed only by \texttt{case} expressions
+	\item[] \textit{All function and constructor arguments are simple variables or constants.}
+	\item[] \textit{All constructors and built-in operations are saturated.}
+	\item[] \textit{Pattern matching is performed only by \texttt{case} expressions.}
 \end{itemize}
 
-[SPJONES 1992 p. 19]
+Each of the constructs in the language corresponds to an operational reading.
 
+Each \texttt{let} expression allocates an object in the heap. The nature of heap objects is expanded on in section \ref{sec:stgm}. A \texttt{case} expression forces evaluation of a sub-expression. A function application represents a tail call and a constructor application represents the return to a continuation. 
 
-syntax details?
+\begin{table}[H]
+	\centering
+	
+	\begin{tabular}{|l|l|}
+		\hline 
+		Construct & Operational reading  \\ 
+		\hline 
+		Function application	& Tail call  \\  
+		\texttt{let} expression	& Heap allocation  \\ 
+		\texttt{case} expression	& Evaluation  \\ 
+		Constructor application	& Return to continuation  \\ 
+		\hline 
+	\end{tabular} 
+	\caption{Table taken from Jones 1993 \cite{jones1992implementing}}
+\end{table}
 
-Move to "in depth" section?
+Section \ref{sec:stgm} will go into further detail on the syntax of the intermediate STG language.
 
 \subsection{\texttt{C--}}
 \label{subsec:C--}
@@ -173,13 +170,6 @@ Move to "in depth" section?
 A code generator (the STG machine) translates the STG language into \texttt{C--}. In fact, in Peyton Jones's 1992 paper \cite{jones1992implementing} this step generated an intermediate representation called \textit{Abstract C}. It was only several years later that \texttt{C--} came into being \cite{jones1999c}.
 
 \texttt{C--} is a programming language developed by Simon Peyton-Jones as a portable backend-language for compilers. Where C++ can be seen as an extension of the C language, \texttt{C--} is to be thought of as a reduction to a smaller core language. \texttt{C--} in general is made for being generated by compilers and not for being written by programmers. \cite{jones1999c}
-
-paragraph
-
-
-
-\paragraph{Why is it needed? C and Stack stuff?}
-
 
 \subsection{Backends}
 GHC supports the generation of assembly machine code via multiple backends. In addition to a native code generator it offers a compilation route via LLVM and a route via C that has, however, been deprecated.
@@ -204,14 +194,12 @@ The C backend uses the \textit{GNU Compiler Collection} GCC but has bee deprecat
 
 The Spineless Tagless G-Machine is an abstract machine for non-strict functional languages.
 It was developed by Simon Peyton Jones as an alternative or successor to other such abstract machines like the \textit{Three Instruction Machine (TIM)} by Fairbairn and Wray \cite{fairbairn1987tim} and the \textit{G-Machine} by Johnsson \cite{johnsson1984efficient}.
+The STG machine transforms the incoming code from the core language to \texttt{C--} via the intermediate STG language.
 
-TODO: Ich sollte hier noch schreiben, was genau die eigentlich macht.
 
 
-Vielleicht zuerst einfach nur den Status von 1992 zeigen und dann die Änderungen? (Push/enter $->$ eval/apply und tagless $->$ dynamic pointer tagging)
--> Sehr gute Idee!
 
-\cite{jones1992implementing}
+
 
 \subsubsection{Closures}
 Heap objects can be either evaluated \textit{head normal forms} (\textit{values}) or unevaluated suspensions (\textit{thunks}).
@@ -220,6 +208,45 @@ In the context of the STGM, the term \textit{closure} refers to both values and 
 
 Such closures are represented as a pointer to a contiguous block of heap-allocated storage which consists of a \textit{pointer} pointing to the static code, followed by the values of any free variables.
 
+
+\subsubsection{Heap Objects}
+
+There are five kinds of heap objects in the STG language \cite{marlow2004making}.
+
+\begin{itemize}
+	\item[] $FUN(x_1 \dots x_n \rightarrow e)$: A function closure \textit{FUN} has $n$ arguments and a body $e$. Such a function may be applied to more or fewer than $n$ arguments but still has an \textit{arity} of n i.e. it is \textit{curried}.
+	\item[] $PAP(f a_1 \dots a_n)$: A partial application \textit{PAP} represents a function \textit{f} that is applied to \textit{n} arguments $x_i$. The function $f$ is a \textit{FUN} object and its \textit{arity} is strictly greater than \textit{n}.
+	\item[] $CON(C a_1 \dots a_n)$: A constructor object \textit{CON} represents a data value. The constructor \textit{C} is applied to $n$ arguments. This application is always saturated, that means the arity of \textit{C} is always equal to the number of arguments.
+	\item[] $THUNK e$: A Thunk is an unevaluated expression, also called \textit{suspension}. A thunk is evaluated and overwritten with the value of \textit{e} when this value is needed.
+	\item[] $BLACKHOLE$: Is an object that is only used during the evaluation of a thunk. It replaces the thunk to prevent e.g. space leaks.
+\end{itemize}
+
+Listings \ref{lst:map1} and \ref{lst:map2} show an implementation of a \texttt{map} function in Haskell and its representation in the STG language respectively.
+
+\begin{listing}[H]
+\begin{minted}[baselinestretch=0.5]{Haskell}
+map f []     = []
+map f (x:xs) = f x : map f xs
+\end{minted}
+\caption{A \texttt{map} function implemented in Haskell.}
+\label{lst:map1}
+\end{listing}
+
+\begin{listing}[H]
+\begin{minted}[baselinestretch=0.5]{Haskell}
+nil = CON Nil
+map = FUN (f xs ->
+        case xs of
+           Nil -> nil
+           Cons y ys -> let h = THUNK (f y)
+                            t = THUNK (map f ys)
+                            r = CON (Cons h t)
+                        in r
+     )
+\end{minted}
+\caption{The map function from listing \ref{lst:map1} represented in the STG language}
+\label{lst:map2}
+\end{listing}
 
 \subsubsection{\enquote{Spineless}}
 The term \enquote{spineless} refers to the way the STG code is represented on the machine. 
