@@ -280,16 +280,18 @@ A tag-ful approach would only enter the closure if it is not yet evaluated. This
 
 
 
-\subsection{Function application}
+\subsection{Function Application}
 Function calls in a lazy functional languages with currying and partial application require special mechanisms in compilers. Showing how function application is performed provides much insight into the compilation strategy of a language like Haskell.
 
-\paragraph{Currying} is one of the core principles of lazy functional languages such as Haskell. A function
-\begin{verbatim}
-  f x y = x
-\end{verbatim}
+\textit{Currying} is one of the core principles of lazy functional languages such as Haskell. A function
+\begin{minted}{Haskell}
+f x y = x
+\end{minted}
 has the type \texttt{a -> (b -> a)}. It can be seen as a function which takes one argument and returns a function which takes the second argument. An application like \texttt{(f 1 2)} is short for \texttt{((f 1) 2)}. Applying \texttt{f} to only one argument is a valid expression and is called \textit{partial application}.
 
 Compilers based on lazy graph reduction often compile function application using a strategy called the \textit{push-enter model}. This model was initially used by the STG machine. The basic principle is that the argument(s) given to a function are \textit{pushed} on an evaluation stack and then the function is tail-called (or \textit{entered})\cite{jones1992implementing}.
+
+
 
 Consider the program shown in listing \ref{lst:apply}. This short program is taken from the code examples of the \textit{Ministg} project. This project \enquote{is an interpreter for a high-level, small-step, operational semantics for the STG machine} by developer Bernie Pope. Its repository can be found on \url{https://github.com/bjpop/ministg}.
 
@@ -311,7 +313,7 @@ main = THUNK(apply const true twentytwo)
 \end{listing}
 
 \Cref{tb:pe_step0,tb:pe_step1,tb:pe_step2,tb:pe_step3,tb:pe_step4,tb:pe_step5,tb:pe_step6} show the evaluation trace for the program shown in \cref{lst:apply} when using the \textit{push-enter-model} of evaluation.
-The tables on the left show the arguments that are currently on the stack as well as the next expression to be evaluated. The tables on the right show the objects which are currently allocated on the heap and their variable names.
+The tables on the left show the arguments that are currently on the stack as well as the next expression to be evaluated. The tables on the right show the objects which are currently allocated on the heap and their variable names. Each table's caption names the most recent evaluation rule that has been applied in bold script. For more details on the meaning of those rules see \textit{Making a Fast Curry: Push/Enter vs. Eval/Apply for Higher-order Languages} by Simon Marlow and Simon Peyton Jones \cite{marlow2004making}.
 
 \begin{table}[H]
 \begin{tabular}{lll}
@@ -324,7 +326,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 	\hline 
 \end{tabular} 	
 & &
-\begin{tabular}{|c|l|}
+\begin{tabular}{|l|l|}
 	\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 	\hline 
 	\textbf{Variable} & \textbf{Object} \\ 
@@ -353,7 +355,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -367,7 +369,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 		\end{tabular} 
 	\end{tabular}
 	\vspace*{5mm}
-	\caption{\textbf{THUNK:} \texttt{main} is a thunk and has therefore been replaced by a \texttt{BLACKHOLE} on the heap during its evaluation. \texttt{upd * main} which is currently on the stack will eventually update \texttt{main} with its value. The next expression to be evaluated is \texttt{apply\_2 ...}, a function of \textit{arity} 2 which is given three arguments.}
+	\caption{\textbf{THUNK (most recent rule applied):} \texttt{main} is a thunk and has therefore been replaced by a \texttt{BLACKHOLE} on the heap during its evaluation. \texttt{upd * main} which is currently on the stack will eventually update \texttt{main} with its value. The next expression to be evaluated is \texttt{apply\_2 ...}, a function of \textit{arity} 2 which is given three arguments.}
 	\label{tb:pe_step1}
 \end{table}
 \newpage
@@ -385,7 +387,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -415,7 +417,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -445,7 +447,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -475,7 +477,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -501,7 +503,7 @@ The tables on the left show the arguments that are currently on the stack as wel
 			\hline 
 		\end{tabular} 	
 		& &
-		\begin{tabular}{|c|l|}
+		\begin{tabular}{|l|l|}
 			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
 			\hline 
 			\textbf{Variable} & \textbf{Object} \\ 
@@ -518,20 +520,16 @@ The tables on the left show the arguments that are currently on the stack as wel
 \subsection{Changes since 1992}
 The Glasgow Haskell Compiler and in consequence its several intermediate phases are in constant development. As a result, the Spineless Tagless G-Machine has undergone multiple changes since Simon Peyton Jones's paper in 1992 \cite{jones1992implementing}. 
 
-
-\subsubsection{\texttt{C--}}
-As mentioned already in section \ref{subsec:C--} before \texttt{C--} was developed its place in GHC's pipeline was taken by an intermediate representation called \textit{Abstract C}
-
-[TODO: more detail from  \cite{jones1999c}] 
-
 \subsubsection{Eval/Apply}
-In 2004, Marlow and Peyton Jones reevaluated the choice for the \textit{push-enter} model for function application \cite{marlow2004making}. They found, that the \textit{eval-apply} model, which had initially been discarded \cite{jones1992implementing} actually delivered better compilation performance.
+In 2004, Marlow and Peyton Jones\cite{marlow2004making} reevaluated the choice for the \textit{push-enter} model for function application . They found, that the \textit{eval-apply} model, which had initially been discarded \cite{jones1992implementing} actually delivered better compilation performance.
 
-[TODO: Explain eval-apply (aber ohne trace)]
+\textit{Eval-apply} is a model which originated from compilers from the Lisp tradition. In this model, the basic principle is to first evaluate the function, then evaluate the argument and apply the function value to the argument \cite{jones1992implementing}. The \textit{caller} of a function knows at the time of calling what the arguments are. It examines the function closure, extracts its arity, and makes an exact call to the function \cite{marlow2004making}. This places the responsibility of matching the \textit{arity} of the function to the number of arguments in the call on the \textit{caller}. In the \textit{push-enter} model this responsibility lies with the \textit{function} itself.
+
+\Cref{appA} shows the evaluation trace of the \texttt{apply.stg} program  from \cref{lst:apply} for the \textit{eval-apply} model in tables \cref{tb:ea_step0,tb:ea_step1,tb:ea_step2,tb:ea_step3,tb:ea_step4,tb:ea_step5,tb:ea_step6,tb:ea_step7}.
 
 
 \subsubsection{Dynamic Pointer Tagging}
-In 2007, Marlow et al.\cite{marlow2007faster} found that Haskell programs compiled by GHC show mispredicted branches on modern processors. This led to a re-examination of the \enquote{tagless} aspect of the STGM. The result were significant performance improvements.
+In 2007, Marlow et al. \cite{marlow2007faster} found that Haskell programs compiled by GHC show mispredicted branches on modern processors. This led to a re-examination of the \enquote{tagless} aspect of the STGM. The result were significant performance improvements.
 
 
 \section{Conclusion}
@@ -548,4 +546,243 @@ This work
 \newpage
 \bibliographystyle{splncs04}
 \bibliography{stgm.bib}
+
+\appendix
+\section{Eval-Apply Evaluation Trace}
+\label{appA}
+\begin{table}[H]
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			& \texttt{main} \\ 
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline 
+			\texttt{apply}&  \texttt{FUN(f x -> f\_? x)}\\ 
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{THUNK(apply\_2 const true twentytwo)}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{The first step is the same as in the \textit{push-enter} model \ref{tb:pe_step0}}
+	\label{tb:ea_step0}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{upd * main} & \texttt{apply\_2 const true twentytwo} \\ 
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline 
+			\texttt{apply}&  \texttt{FUN(f x -> f\_? x)}\\ 
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{THUNK(apply\_2 const true twentytwo)}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{THUNK:} This step is the same as in \cref{tb:pe_step1} as well.}
+	\label{tb:ea_step1}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{(* twentytwo)}& \texttt{const\_? true} \\ 
+			\texttt{upd * main} & \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline 
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{BLACKHOLE}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{CALLK:} A call continuation for the excess argument \texttt{twentytwo} has been pushed onto the stack.}
+	\label{tb:ea_step2}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{(* twentytwo)}& \texttt{\$0} \\ 
+			\texttt{upd * main} & \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline
+			\texttt{\$0} & \texttt{PAP const true}\\
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{BLACKHOLE}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)} \\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{PAP2:} The rule \textbf{PAP2} adds a new heap object. The object \texttt{\$0} is a partial application of the function \texttt{const} to only one argument.}
+	\label{tb:ea_step3}
+\end{table}
+
+\begin{table}[H]
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{upd * main} & \texttt{\$0\_? twentytwo} \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline
+			\texttt{\$0} & \texttt{PAP const true} \\
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{BLACKHOLE}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{RETFUN:} The rule \textbf{RETFUN} continues the call continuation \texttt{(* twentytwo)} which previously was located on the stack. The function \texttt{\$0\_?} is applied to \texttt{twentytwo}.}
+	\label{tb:ea_step4}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{upd * main} & \texttt{const\_? true twentytwo} \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline
+			\texttt{const}& \texttt{FUN(x y -> x)} \\
+			\texttt{main}& \texttt{BLACKHOLE}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\texttt{twentytwo}&\texttt{CON(I 22)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{PCALL:} The partial application object has been resolved since \texttt{const} now has all 2 arguments available that it needs.}
+	\label{tb:ea_step5}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			\texttt{upd * main} & \texttt{true} \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline
+			\texttt{main}& \texttt{BLACKHOLE}\\
+			\texttt{true}&\texttt{CON(True)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{EXACT:} The exact call has happened and the application of \texttt{const} has been evaluated.}
+	\label{tb:ea_step6}
+\end{table}
+
+\begin{table}[H]
+	\vspace{-5em}
+	\begin{tabular}{lll}
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Stack and Code}}  \\
+			\hline 
+			\textbf{Stack} & \textbf{Expression} \\ 
+			\hline 
+			 & \texttt{true} \\
+			\hline 
+		\end{tabular} 	
+		& &
+		\begin{tabular}{|l|l|}
+			\multicolumn{2}{c}{\textbf{Heap}}  \\ 
+			\hline 
+			\textbf{Variable} & \textbf{Object} \\ 
+			\hline
+			\texttt{true}&\texttt{CON(True)}\\
+			\hline
+		\end{tabular} 
+	\end{tabular}
+	\vspace*{5mm}
+	\caption{\textbf{UPDATE:} Finally, the thunk \texttt{main} is updated.}
+	\label{tb:ea_step7}
+\end{table}
+
+
+
+
+
 \end{document}
