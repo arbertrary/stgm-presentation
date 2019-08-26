@@ -20,7 +20,7 @@
 
 \begin{document}
 %
-\title{Evolution of the Spineless Tagless G-Machine}
+\title{Compiling Haskell: GHC and the Spineless Tagless G-Machine}
 %
 %\titlerunning{Spineless Tagless G-Machine}
 % If the paper title is too long for the running head, you can set
@@ -301,7 +301,7 @@ It offers functionality for tracing the evaluation steps which the STG machine t
 	\begin{minted}[baselinestretch=0.5]{Haskell}
 	const = FUN(x y -> x);
 	
-	apply = FUN(f x -> f x);
+	apply = FUN(f x -> f x);b
 	
 	true = CON(True);
 	twentytwo = CON(I 22);
