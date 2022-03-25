@@ -4,7 +4,7 @@ slideNumber: True
 title: The Spineless Tagless G-Machine
 subtitle: How GHC Handles Partial Application
 author: Armin Bernstetter
-date: today
+date: 2019-07-20
 bibliography: stgm.bib
 csl: chicago-author-date.csl
 ---
@@ -299,7 +299,7 @@ Heap
 - true bleibt zurück
 - Update: main blackhole wird mit wert upgedated
 
-<!--
+
 # Comparison
 
 ## Pro Eval/Apply
@@ -317,7 +317,7 @@ Heap
 - Eliminates some PAP allocations compared to e/a
 - payload of PAP object can be self-describing because arguments are tagged. In contrast, an e/a PAP object relies on its FUN to describe the layout of he payload. this results in some extra complication in the garbage collector and an extra global invariant: a PAP must contain a FUN. cannot contain another PAP
 
--->
+
 
 # Conclusion
 

@@ -1,0 +1,39 @@
+annotations: []
+decks:
+- public/stgm-deck.html
+captions: []
+pages: []
+static:
+- public/trace/apply.stg
+- public/trace/trace_ea/ea_trace.md
+- public/trace/trace_ea/step0.html
+- public/trace/trace_ea/step1.html
+- public/trace/trace_ea/step2.html
+- public/trace/trace_ea/step3.html
+- public/trace/trace_ea/step4.html
+- public/trace/trace_ea/step5.html
+- public/trace/trace_ea/step6.html
+- public/trace/trace_ea/step7.html
+- public/trace/trace_ea/step8.html
+- public/trace/trace_pe/pe_trace.md
+- public/trace/trace_pe/step0.html
+- public/trace/trace_pe/step1.html
+- public/trace/trace_pe/step2.html
+- public/trace/trace_pe/step3.html
+- public/trace/trace_pe/step4.html
+- public/trace/trace_pe/step5.html
+- public/trace/trace_pe/step6.html
+- public/trace/trace_pe/step7.html
+css: []
+sources:
+- stgm-deck.md
+handoutsPdf:
+- public/stgm-handout.pdf
+pagesPdf: []
+questions: []
+decksPdf:
+- public/stgm-deck.pdf
+recordings: []
+handouts:
+- public/stgm-handout.html
+times: []

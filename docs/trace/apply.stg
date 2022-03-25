@@ -1,0 +1,4 @@
+#const = FUN(x y -> x);
+#apply = FUN(f x -> f x);
+twentytwo = CON(I 22);
+main = THUNK(apply const twentytwo true)
